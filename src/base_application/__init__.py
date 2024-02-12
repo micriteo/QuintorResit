@@ -1,0 +1,1 @@
+api_server_ip = "https://sportsaccountapi.azurewebsites.net/"

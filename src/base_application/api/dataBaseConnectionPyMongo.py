@@ -30,7 +30,7 @@ def get_connection_postgre():
     # Establishing the connection
     conn = psycopg2.connect(
         user="admingamer", password="Lololol1",
-        host="quintorsportsresit.postgres.database.azure.com", port=5432, database=""
+        host="quintorsportsresit.postgres.database.azure.com", port=5432, database="postgres"
     )
     print(conn)
     return conn

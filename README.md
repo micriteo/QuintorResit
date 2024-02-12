@@ -33,11 +33,11 @@ The application was built with Python and TKinter utilizing Flask to create the 
 
 <h3> Authors </h3>
     
-* Mathew Shardin
-* Alin Costache
+* Dimitri Vastenhout
+* Evald Narkevicius
 * Teodor Folea
-* Nathan Pais D'Costa
-* Martin Radoychev
+* Stefani Margaritova
+* Corvin Wittmaack
 
 
 

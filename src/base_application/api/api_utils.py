@@ -3,9 +3,6 @@ from lxml import etree
 import os
 import jsonschema
 from xmlschema import XMLSchema
-
-from src.base_application.api.APIConnect import postgre_connection
-
 xml_schema_path = os.path.join(os.path.dirname(__file__), 'xmlSchema.xsd')
 json_schema_path = os.path.join(os.path.dirname(__file__), 'mt_json_schema.json')
 json_member_path_schema = os.path.join(os.path.dirname(__file__), 'insert_member_schema.json')
@@ -74,4 +71,3 @@ def validate_edit_transaction_json(json_inp):
     except (Exception, jsonschema.ValidationError) as error:
         print(error)
         return False
-

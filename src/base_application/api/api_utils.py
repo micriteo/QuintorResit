@@ -75,14 +75,3 @@ def validate_edit_transaction_json(json_inp):
         print(error)
         return False
 
-
-def if_not_duplicate(file):
-    cursor = postgre_connection.cursor()
-    json_transactions = file.get_json()
-
-    reference_number = str(json_transactions["transaction_reference"])
-    cursor.execute("SELECT * FROM file WHERE referencenumber = %s LIMIT 1", (reference_number))
-    data = cursor.fetchall()
-    if len(data) == 0:
-        return True
-    return False

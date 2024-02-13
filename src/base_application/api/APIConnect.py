@@ -587,18 +587,6 @@ def search_keyword(keyword):
         return jsonify(results)
     except (Exception, psycopg2.DatabaseError) as error:
         return jsonify({'message': error}), 500
-
-def if_not_duplicate(file):
-    cursor = postgre_connection.cursor()
-    json_transactions = file.get_json()
-
-    reference_number = str(json_transactions["transaction_reference"])
-    cursor.execute("SELECT * FROM file WHERE referencenumber = %s LIMIT 1", (reference_number))
-    data = cursor.fetchall()
-    if len(data) == 0:
-        return True
-    return False
-
 if __name__ == '__main__':
     app.run()
 

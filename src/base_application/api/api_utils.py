@@ -3,6 +3,9 @@ from lxml import etree
 import os
 import jsonschema
 from xmlschema import XMLSchema
+
+from src.base_application.api.APIConnect import postgre_connection
+
 xml_schema_path = os.path.join(os.path.dirname(__file__), 'xmlSchema.xsd')
 json_schema_path = os.path.join(os.path.dirname(__file__), 'mt_json_schema.json')
 json_member_path_schema = os.path.join(os.path.dirname(__file__), 'insert_member_schema.json')
@@ -71,3 +74,13 @@ def validate_edit_transaction_json(json_inp):
     except (Exception, jsonschema.ValidationError) as error:
         print(error)
         return False
+def if_not_duplicate(file):
+    cursor = postgre_connection.cursor()
+    json_transactions = file.get_json()
+
+    reference_number = str(json_transactions["transaction_reference"])
+    cursor.execute("SELECT * FROM file WHERE referencenumber = %s LIMIT 1", (reference_number))
+    data = cursor.fetchall()
+    if len(data) == 0:
+        return True
+    return False

@@ -74,6 +74,8 @@ def validate_edit_transaction_json(json_inp):
     except (Exception, jsonschema.ValidationError) as error:
         print(error)
         return False
+
+
 def if_not_duplicate(file):
     cursor = postgre_connection.cursor()
     json_transactions = file.get_json()

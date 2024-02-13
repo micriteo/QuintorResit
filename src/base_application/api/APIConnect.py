@@ -12,7 +12,7 @@ from bson.json_util import dumps as json_util_dumps
 # from src.base_application.api.main import app
 app = Flask(__name__)
 
-from src.base_application.api.dataBaseConnectionPyMongo import get_connection_postgre, get_connection_postgre_user,\
+from src.base_application.api.dataBaseConnectionPyMongo import get_connection_postgre, get_connection_postgre_user, \
     get_collection
 from src.base_application.api.api_utils import validate_json, validate_member_json, validate_association_json, \
     validate_xml, validate_member_xml, validate_edit_transaction_json
@@ -587,13 +587,7 @@ def search_keyword(keyword):
         return jsonify(results)
     except (Exception, psycopg2.DatabaseError) as error:
         return jsonify({'message': error}), 500
+
+
 if __name__ == '__main__':
     app.run()
-
-
-
-
-
-
-
-

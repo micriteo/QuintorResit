@@ -6,7 +6,7 @@ from flask import Flask
 def get_database():
     # Provide the mongodb atlas url to connect python to mongodb using pymongo. Use your own connection string
     # CONNECTION_STRING = "mongodb+srv://IT2C:ZHty3DkM0tIozYks@it2csportsaccounting.byzfgpv.mongodb.net/?retryWrites=true&w=majority"
-    CONNECTION_STRING = "mongodb+srv://dimitrivastenhout:vC51i08W41TemLJ8 @cluster0.qox7h1j.mongodb.net/?retryWrites=true&w=majority"
+    CONNECTION_STRING = "mongodb+srv://dimitrivastenhout:vC51i08W41TemLJ8@cluster0.qox7h1j.mongodb.net/?retryWrites=true&w=majority"
 
     # Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
     client = MongoClient(CONNECTION_STRING)

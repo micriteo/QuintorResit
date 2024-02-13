@@ -305,3 +305,4 @@ def retrieveDB(protocol):
     else:
         output = retrieveDB_XML()
     return output
+

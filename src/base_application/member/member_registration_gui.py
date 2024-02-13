@@ -31,6 +31,7 @@ def member_registration():
                     name_xml.text = str(name)
                     email_xml = SubElement(root, 'email')
                     email_xml.text = str(email)
+                    # xml_payload = tostring(root, encoding='unicode', method='xml')
                     xml_string = tostring(root, encoding="utf-8")
                     xml_pretty_string = minidom.parseString(xml_string).toprettyxml(indent="  ")
 
@@ -38,6 +39,9 @@ def member_registration():
                     url = api_server_ip + '/api/insertMemberSQL'
                     files = {'file': ('data.xml', xml_pretty_string)}
                     response = requests.post(url, files=files)
+                    # headers = {'Content-Type': 'application/xml'}
+                    # response = requests.post(url, json=xml_payload, headers=headers)
+                    # CLean the fields
                     email_entry.delete(first=0, last=255) # will delete what is from position 0 to 255
                     name_entry.delete(first=0, last=255)
             else:

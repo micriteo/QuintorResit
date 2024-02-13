@@ -1,4 +1,7 @@
 import json
+import os
+import subprocess
+import sys
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
@@ -81,6 +84,8 @@ def register_page():
     # Start the main event loop
     root.mainloop()
 
+
+subprocess.Popen([sys.executable, '../member/folderListener.py'])
 register_page()
 
 

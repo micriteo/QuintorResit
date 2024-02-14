@@ -24,7 +24,7 @@ def parse_mt940_file(file_path) -> dict:
 
 
 def check_mt940_file(file_path):
-    if check_tag(file_path) and check_file_extension(file_path):
+    if check_file_extension(file_path) and check_tag(file_path):
         return True
     else:
         return False
@@ -60,9 +60,11 @@ def check_tag(file_path):
 
 def check_file_extension(file_path):
     # check if the file name ends with .sta
-    if file_path.endswith('.sta'):
+    if file_path.endswith('.sta') or file_path.endswith('.txt'):
+        print(f"{file_path} has a correct extension")
         return True
     else:
+        print(f"{file_path} has an incorrect extension")
         return False
 
 

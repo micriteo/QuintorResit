@@ -1,5 +1,5 @@
 # Project-6.1 Sports Accounting
-### By NHL Stenden Student Team IT2C for Quintor
+### By NHL Stenden Student Team IT3I for Quintor
 
 <h3> Description </h3>
 A small desktop application that allows sports assocations to keep track and manage their finances. Sports Accounting is capable of reading MT-940 bank files (.sta) to save and manipulate bank trsanction data locally. The application features a NoSQL MongoDB database for archival storage of the files as well as a PostgreSQL database for manipulating the transactions. 

@@ -3,6 +3,7 @@ from lxml import etree
 import os
 import jsonschema
 from xmlschema import XMLSchema
+
 xml_schema_path = os.path.join(os.path.dirname(__file__), 'xmlSchema.xsd')
 json_schema_path = os.path.join(os.path.dirname(__file__), 'mt_json_schema.json')
 json_member_path_schema = os.path.join(os.path.dirname(__file__), 'insert_member_schema.json')
@@ -71,3 +72,25 @@ def validate_edit_transaction_json(json_inp):
     except (Exception, jsonschema.ValidationError) as error:
         print(error)
         return False
+
+
+# XML CRUD
+
+# creates a xml entry
+def xml_create():
+    pass
+
+
+# reads a xml entry
+def xml_read():
+    pass
+
+
+# updates the xml entry
+def xml_update():
+    pass
+
+
+# removes a xml entry
+def xml_delete():
+    pass

@@ -1,0 +1,77 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="MT940">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element type="xs:string" name="account_identification"/>
+        <xs:element name="available_balance">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="amount">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:float" name="amount"/>
+                    <xs:element type="xs:string" name="currency"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element type="xs:date" name="date"/>
+              <xs:element type="xs:string" name="status"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="final_closing_balance">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="amount">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:float" name="amount"/>
+                    <xs:element type="xs:string" name="currency"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element type="xs:date" name="date"/>
+              <xs:element type="xs:string" name="status"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="final_opening_balance">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="amount">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:float" name="amount"/>
+                    <xs:element type="xs:string" name="currency"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element type="xs:date" name="date"/>
+              <xs:element type="xs:string" name="status"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="forward_available_balance">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="amount">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:float" name="amount"/>
+                    <xs:element type="xs:string" name="currency"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element type="xs:date" name="date"/>
+              <xs:element type="xs:string" name="status"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element type="xs:string" name="sequence_number"/>
+        <xs:element type="xs:byte" name="statement_number"/>
+        <xs:element type="xs:string" name="transaction_reference"/>
+        <xs:element type="xs:string" name="transactions"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

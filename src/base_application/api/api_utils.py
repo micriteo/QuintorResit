@@ -136,8 +136,19 @@ def xml_create():
 
 
 # reads a xml entry
-def xml_read():
-    pass
+def xml_read(query={}):
+    # if no query is provided all documents in the collection are returned
+    collection = get_collection()
+    documents = collection.find(query)
+
+    for doc in documents:
+        if '_id' in doc:
+            del doc['_id']
+
+        xml_root = dict_to_xml(doc, "Transaction")
+        xml_str = ET.tostring(xml_root, encoding='unicode')
+        print(xml_str)
+    return
 
 
 # updates the xml entry
@@ -146,5 +157,9 @@ def xml_update():
 
 
 # removes a xml entry
-def xml_delete():
-    pass
+def xml_delete(query):
+    collection = get_collection()
+    documents = collection.delete_many(query)
+
+    print(f"Entries deleted: {documents.deleted_count}")
+    return

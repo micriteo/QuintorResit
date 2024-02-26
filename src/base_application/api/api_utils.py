@@ -140,15 +140,15 @@ def xml_read(query={}):
     # if no query is provided all documents in the collection are returned
     collection = get_collection()
     documents = collection.find(query)
+    xml_roots = []
 
     for doc in documents:
         if '_id' in doc:
             del doc['_id']
 
         xml_root = dict_to_xml(doc, "Transaction")
-        xml_str = ET.tostring(xml_root, encoding='unicode')
-        print(xml_str)
-    return
+        xml_roots.append(xml_root)
+    return xml_roots
 
 
 # updates the xml entry

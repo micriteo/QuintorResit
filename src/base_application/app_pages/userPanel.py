@@ -44,6 +44,21 @@ def create_window():
         from editTransaction import edit_transaction_page
         edit_transaction_page(selected_row)
 
+    def update_button_click(table_inp, widget):
+        global protocol_retrieve
+        # Clear existing rows in the table
+        table_inp.delete(*table_inp.get_children())
+        # search_summary_num.delete(first=0, last=255)
+        # Show all transactions if keyword entry field is empty
+        rows = retrieveDB(protocol_retrieve)
+        if len(rows) == 0:
+            return
+        # Insert retrieved data into the table
+        for result in rows:
+            table_inp.insert("", "end", values=result)
+        # Remove the sum per search label if table is updated
+        widget.config(text="")
+
     def details_button_click():
         global selected_row
         if selected_row is None:
@@ -159,6 +174,9 @@ def create_window():
 
     button1 = ttk.Button(left_frame, text="Keyboard Search", command=lambda: keyword_search_button(entry.get(), table, search_summary_num))
     button1.place(x=70, y=400, width=150, height=24)
+
+    update_button = ttk.Button(right_frame, text="Update", command=lambda: update_button_click(table, ""))
+    update_button.place(x=235, y=35, width=100, height=30)
 
     # Creating JSON and XML buttons
     # Create a style for the radio buttons

@@ -25,7 +25,7 @@ The application was built with Python and TKinter utilizing Flask to create the 
 <h3> Installation </h3>
 
 1. Clone the repository or downaload the latest release
-2. Install the requirements `-pip install requirements.txt`
+2. Install the requirements `pip install -r requirements.txt`
 3. Make sure to solve one potential conflict by running these commands
 `pip uninstall -y mt940 mt-940`
 `pip install -U mt-940`

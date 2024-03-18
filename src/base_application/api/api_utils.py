@@ -1,4 +1,5 @@
 import json
+from bson import ObjectId
 from lxml import etree
 import os
 import jsonschema
@@ -135,20 +136,31 @@ def xml_create():
     collection.insert_one(xml_mt940)
 
 
-# reads a xml entry
-def xml_read(query={}):
-    # if no query is provided all documents in the collection are returned
+# reads all transactions & returns them as xml entries
+def xml_read():
     collection = get_collection()
-    documents = collection.find(query)
-    xml_roots = []
+    documents = collection.find({})
 
-    for doc in documents:
-        if '_id' in doc:
-            del doc['_id']
+    root = ET.Element("Transactions")
+    for document in documents:
+        document['_id'] = str(document['_id'])
+        xml_root = dict_to_xml(document, "Transaction")
+        root.append(xml_root)
 
-        xml_root = dict_to_xml(doc, "Transaction")
-        xml_roots.append(xml_root)
-    return xml_roots
+    return root
+
+
+# reads a transaction based on its id
+def xml_read_by_object_id(object_id: str):
+    collection = get_collection()
+    document = collection.find_one({"_id": ObjectId(object_id)})
+
+    if document:
+        document['_id'] = str(document['_id'])
+        xml_root = dict_to_xml(document, "Transaction")
+        return xml_root
+    else:
+        return None
 
 
 # updates the xml entry
@@ -156,10 +168,14 @@ def xml_update():
     pass
 
 
-# removes a xml entry
-def xml_delete(query):
+# removes an entry based on its id
+def xml_delete(object_id: str):
     collection = get_collection()
-    documents = collection.delete_many(query)
+    document = collection.delete_one({"_id": ObjectId(object_id)})
 
-    print(f"Entries deleted: {documents.deleted_count}")
-    return
+    if document.deleted_count > 0:
+        print(f"Transaction with _id {object_id} deleted successfully.")
+        return True
+    else:
+        print(f"No transaction found with _id {object_id}.")
+        return False

@@ -6,7 +6,7 @@ from src.base_application.admin.adminLogin import login_admin_page
 from src.base_application import api_server_ip
 from xml.etree import ElementTree as ET
 
-
+protocol_retrieve = "JSON"
 
 def create_window():
     selected_row = None
@@ -16,12 +16,14 @@ def create_window():
     root = tk.Tk()
     root.title("Sports Accounting - Register a user")
     root.geometry("1200x900")
+    retrieve_balance()
+
 
     # Get balance from db
-    balance = "No data"
-    response = requests.get(api_server_ip + "/api/getFile")
-    if len(response.json()) != 0:
-        balance = response.json()[0][4]
+    ##balance = "No data"
+    ##response = requests.get(api_server_ip + "/api/getFile")
+    ##if len(response.json()) != 0:
+    ##    balance = response.json()[0][4]
 
     def admin_login_button_click():
         root.destroy()
@@ -43,6 +45,24 @@ def create_window():
         root.destroy()
         from editTransaction import edit_transaction_page
         edit_transaction_page(selected_row)
+
+    def update_button_click(table_inp, widget):
+        ##global protocol_retrieve
+        # Clear existing rows in the table
+        table_inp.delete(*table_inp.get_children())
+        # search_summary_num.delete(first=0, last=255)
+        response = requests.get(api_server_ip + "/api/getFile")
+
+        balance_number.config(text=retrieve_balance())
+        # Show all transactions if keyword entry field is empty
+        rows = retrieveDB(protocol_retrieve)
+        if len(rows) == 0:
+            return
+        # Insert retrieved data into the table
+        for result in rows:
+            table_inp.insert("", "end", values=result)
+        # Remove the sum per search label if table is updated
+        widget.config(text="")
 
     def details_button_click():
         global selected_row
@@ -92,7 +112,8 @@ def create_window():
     balance_label = tk.Label(left_frame, text="Available Balance:", font=("Inter", 15), bg="#D9D9D9", fg="#000000", justify="left")
     balance_label.place(x=70, y=500, width=160, height=24)
 
-    balance_number = tk.Label(left_frame, text=balance, font=("Inter", 15), bg="#D9D9D9", fg="#000000", justify="left")
+    #balance_number = tk.Label(left_frame, text=balance, font=("Inter", 15), bg="#D9D9D9", fg="#000000", justify="left")
+    balance_number = tk.Label(left_frame, text=retrieve_balance(), font=("Inter", 15), bg="#D9D9D9", fg="#000000", justify="left")
     balance_number.place(x=250, y=500, width=160, height=24)
 
     search_balance_label = tk.Label(left_frame, text="Sum of found transactions:", font=("Inter", 15), bg="#D9D9D9", fg="#000000", justify="left")
@@ -160,6 +181,9 @@ def create_window():
     button1 = ttk.Button(left_frame, text="Keyboard Search", command=lambda: keyword_search_button(entry.get(), table, search_summary_num))
     button1.place(x=70, y=400, width=150, height=24)
 
+    update_button = ttk.Button(right_frame, text="Update", command=lambda: update_button_click(table, ""))
+    update_button.place(x=235, y=35, width=100, height=30)
+
     # Creating JSON and XML buttons
     # Create a style for the radio buttons
     style = ttk.Style()
@@ -217,6 +241,8 @@ def create_window():
 
     def update_table(table_inp):
         global protocol_retrieve
+        table_inp.delete(*table_inp.get_children())
+    # Show all transactions if keyword entry field is empty
         rows = retrieveDB(protocol_retrieve)
         if len(rows) == 0:
             return
@@ -305,3 +331,10 @@ def retrieveDB(protocol):
     else:
         output = retrieveDB_XML()
     return output
+
+def retrieve_balance():
+    balance = "No data"
+    response = requests.get(api_server_ip + "/api/getFile")
+    if len(response.json()) != 0:
+        balance = response.json()[0][4]
+    return  balance

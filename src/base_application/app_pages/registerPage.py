@@ -7,7 +7,7 @@ import sys
 from tkinter import *
 import requests
 from src.base_application import api_server_ip
-from userPanel import create_window
+from userPanel import create_window, retrieveDB
 from src.base_application.utils import hash_password
 
 
@@ -24,6 +24,14 @@ def register_page():
     root.title("Register a user")
     root.geometry("1200x900")
 
+    def update_table(table_inp):
+        global protocol_retrieve
+        rows = retrieveDB(protocol_retrieve)
+        if len(rows) == 0:
+            return
+        # Insert retrieved data into the table
+        for result in rows:
+            table_inp.insert("", "end", values=result)
     def button_click(name, password, iban):
         hashed_pass = hash_password(password)
         # Save to DB
@@ -69,6 +77,9 @@ def register_page():
 
     passwd = tk.Entry(left_frame)
     passwd.place(x=180, y=345, width=300, height=30)
+
+    update_button = ttk.Button(right_frame, text="Update", command=lambda: update_table())
+    update_button.place(x=235, y=35, width=100, height=30)
 
     # IBAN
     assoc_iban_label = tk.Label(text="IBAN", font=("Inter", 14, "normal"), bg="#D9D9D9", fg="black")

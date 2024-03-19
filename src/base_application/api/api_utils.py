@@ -77,7 +77,7 @@ def validate_edit_transaction_json(json_inp):
         return False
 
 
-# XML CRUD
+# XML CRUD for MONGODB
 
 def dict_to_xml(d, root_name='root'):
     root = ET.Element(root_name)
@@ -106,34 +106,18 @@ def json_file_to_xml(file_path, root_name='root'):
 
 
 # creates a xml entry from json
-def xml_create():
+def xml_create(xml_string: str):
     collection = get_collection()
 
-    # json import link to file
-    json_imp = open("mt940Example.json")
-    json_dict = json.load(json_imp)
-
-    # json validation
-    if validate_json(json_dict):
-        print("JSON FILE VALIDATED AND CORRECT")
-        print(json_dict)
-    else:
-        print("JSON FILE NOT CORRECT")
-        return False
-
-    # xml file to add the convert the entered JSON file into
-    xml_mt940 = json_file_to_xml("mt940Example.json", root_name='MT940')
-    print(xml_mt940)
-
     # xml validation
-    if validate_xml(xml_mt940):
+    if validate_xml(xml_string):
         print("XML FILE VALIDATED AND CORRECT")
     else:
         print("XML FILE NOT CORRECT")
-        print(xml_mt940)
+        print(xml_string)
         return False
 
-    collection.insert_one(xml_mt940)
+    collection.insert_one(xml_string)
 
 
 # reads all transactions & returns them as xml entries
@@ -181,3 +165,24 @@ def xml_delete(object_id: str):
     else:
         print(f"No transaction found with _id {object_id}.")
         return False
+
+
+# JSON CRUD FOR MONGODB
+
+# creates mt940 in mongo with a json file
+def json_create(mt940_file: json):
+    collections = get_collection()
+
+    # json validation
+    if not validate_json(mt940_file):
+
+        return False
+    else:
+        collections.insert_one(mt940_file)
+
+
+# updates a mongoDB document based on object_id
+def json_update(object_id: str, updated_json: json):
+    object_id = {'_id': ObjectId(object_id)}
+    collection = get_collection()
+    collection.update_one(object_id, updated_json)

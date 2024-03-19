@@ -72,18 +72,26 @@ def get_transactions_count():
 @app.route("/api/downloadJSON", methods=["GET"])
 def downloadJSON():
     with app.app_context():
-        # Get the data from the database
-        try:
-            data = get_all_transactions()
-        except TypeError:
-            data = []
+        # Get the Content-Type header from the request
+        content_type_header = request.headers.get('Content-Type', 'application/json')
 
-        # Create a response object
-        json_data = json_util.dumps(data, indent=4)
+        # Check if the Content-Type header is application/json
+        if content_type_header == 'application/json':
+            # Get the data from the database
+            try:
+                data = get_all_transactions()
+            except TypeError:
+                data = []
 
-        response = make_response(json_data)
-        response.headers['Content-Type'] = 'application/json'
-        response.headers['Content-Disposition'] = 'attachment; filename=data.json'
+            # Create a JSON response object
+            json_data = json_util.dumps(data, indent=4)
+            response = make_response(json_data)
+            response.headers['Content-Type'] = 'application/json'
+            response.headers['Content-Disposition'] = 'attachment; filename=data.json'
+        else:
+            # Return an error message if the Content-Type header is not application/json
+            return 'Unsupported media type', 415
+
     return response
 
 

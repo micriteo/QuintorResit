@@ -97,28 +97,38 @@ def downloadJSON():
 
 @app.route("/api/downloadXML", methods=["GET"])
 def downloadXML():
-    # Get the data from the database
-    try:
-        data = get_all_transactions()
-    except TypeError:
-        data = []
+    with app.app_context():
+        # Get the Content-Type header from the request
+        content_type_header = request.headers.get('Content-Type', 'application/xml')
 
-    # Convert the data to a JSON string
-    # json_data = json.dumps(data)
-    json_data = json_util.dumps(data, indent=4)
-    # Convert the JSON data to an ElementTree
-    xml_root = ET.fromstring(json2xml.Json2xml(json.loads(json_data)).to_xml())
-    xml_str = ET.tostring(xml_root, encoding='utf-8', method='xml')
+        # Check if the Content-Type header is application/xml
+        if content_type_header == 'application/xml':
+            # Get the data from the database
+            try:
+                data = get_all_transactions()
+            except TypeError:
+                data = []
 
-    # Validate XML
-    if not validate_xml(xml_str):
-        print('Validation failed')
-        # return jsonify({'Error': 'Error Occured'})
+            # Convert the data to a JSON string
+            json_data = json_util.dumps(data, indent=4)
 
-    # Create the Flask response object with XML data
-    response = make_response(xml_str)
-    response.headers["Content-Type"] = "application/xml"
-    response.headers["Content-Disposition"] = "attachment; filename=data.xml"
+            # Convert the xml data to an ElementTree
+            xml_root = ET.fromstring(json2xml.Json2xml(json.loads(json_data)).to_xml())
+            xml_str = ET.tostring(xml_root, encoding='utf-8', method='xml')
+
+            # Validate XML
+            if not validate_xml(xml_str):
+                print('Validation failed')
+                # return jsonify({'Error': 'Error Occured'})
+
+            # Create the Flask response object with XML data
+            response = make_response(xml_str)
+            response.headers["Content-Type"] = "application/xml"
+            response.headers["Content-Disposition"] = "attachment; filename=data.xml"
+        else:
+            # Return an error message if the Content-Type header is not application/json
+            return 'Unsupported media type', 415
+
     return response
 
 

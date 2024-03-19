@@ -164,8 +164,10 @@ def xml_read_by_object_id(object_id: str):
 
 
 # updates the xml entry
-def xml_update():
-    pass
+def xml_update(object_id: str, update: dict):
+    object_id = {'_id': ObjectId(object_id)}
+    collection = get_collection()
+    collection.update_one(object_id, update)
 
 
 # removes an entry based on its id

@@ -34,7 +34,7 @@ def register_page():
             table_inp.insert("", "end", values=result)
     def button_click(name, password, iban):
         hashed_pass = hash_password(password)
-        # Save to DB
+        # Save to DBp
         payload = {'accountID': iban,
                    'name': name,
                    'password': hashed_pass}

@@ -131,7 +131,7 @@ def adminPanel():
 
     def get_json_button_click():
         # Make a request to download the JSON data
-        response = requests.get(api_server_ip + "/api/downloadJSON")
+        response = requests.get(api_server_ip + "/api/download")
         json_data = response.json()
 
 
@@ -153,7 +153,7 @@ def adminPanel():
 
     def get_xml_button_click():
         headers = {'Accept': 'application/xml'}
-        xml_data = requests.get(api_server_ip + "/api/downloadXML", headers=headers)
+        xml_data = requests.get(api_server_ip + "/api/download", headers=headers)
         # xml_root = ET.fromstring(xml_data.content)
         xml_root = xml_data.text
 

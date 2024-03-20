@@ -41,8 +41,7 @@ def index():
             "getTransactionsAmount": "/api/getTransactionsCount",
             "getTransactions": "/api/getTransactions",
             "uploadMT940File": "/api/uploadFile",
-            "downloadJSON": "/api/downloadJSON",
-            "downloadXML": "/api/downloadXML",
+            "download": "/api/download",
             "searchKeywordSQL": "/api/searchKeyword/<keyword>",
             "insertAssociationSQL": "/api/insertAssociation",
             "insertFileSQL": "/api/insertFile",
@@ -68,70 +67,6 @@ def get_transactions_count():
     output = {"transactionsCount": transactions_collection.count_documents({})}
     return output
 
-
-@app.route("/api/downloadJSON", methods=["GET"])
-def downloadJSON():
-    with app.app_context():
-        # Get the Content-Type header from the request
-        content_type_header = request.headers.get('Content-Type', 'application/json')
-
-        # Check if the Content-Type header is application/json
-        if content_type_header == 'application/json':
-            # Get the data from the database
-            try:
-                data = get_all_transactions()
-            except TypeError:
-                data = []
-
-            # Create a JSON response object
-            json_data = json_util.dumps(data, indent=4)
-            response = make_response(json_data)
-            response.headers['Content-Type'] = 'application/json'
-            response.headers['Content-Disposition'] = 'attachment; filename=data.json'
-        else:
-            # Return an error message if the Content-Type header is not application/json
-            return 'Unsupported media type', 415
-
-    return response
-
-
-@app.route("/api/downloadXML", methods=["GET"])
-def downloadXML():
-    with app.app_context():
-        # Get the Content-Type header from the request
-        content_type_header = request.headers.get('Content-Type', 'application/xml')
-
-        # Check if the Content-Type header is application/xml
-        if content_type_header == 'application/xml':
-            # Get the data from the database
-            try:
-                data = get_all_transactions()
-            except TypeError:
-                data = []
-
-            # Convert the data to a JSON string
-            json_data = json_util.dumps(data, indent=4)
-
-            # Convert the xml data to an ElementTree
-            xml_root = ET.fromstring(json2xml.Json2xml(json.loads(json_data)).to_xml())
-            xml_str = ET.tostring(xml_root, encoding='utf-8', method='xml')
-
-            # Validate XML
-            if not validate_xml(xml_str):
-                print('Validation failed')
-                # return jsonify({'Error': 'Error Occured'})
-
-            # Create the Flask response object with XML data
-            response = make_response(xml_str)
-            response.headers["Content-Type"] = "application/xml"
-            response.headers["Content-Disposition"] = "attachment; filename=data.xml"
-        else:
-            # Return an error message if the Content-Type header is not application/json
-            return 'Unsupported media type', 415
-
-    return response
-
-
 @app.route("/api/getTransactions", methods=["GET"])
 def get_all_transactions():
     output_transactions = []
@@ -140,6 +75,46 @@ def get_all_transactions():
         output_transactions.append(trans)
 
     return output_transactions
+
+@app.route("/api/download", methods=["GET"])
+def download():
+    with app.app_context():
+        # Get the Accept header from the request
+        accept_header = request.headers.get('Accept', 'application/json')
+
+        # Get the data from the database
+        try:
+            data = get_all_transactions()
+        except TypeError:
+            data = []
+
+        if accept_header == 'application/json':
+            # Create a JSON response object
+            json_data = json_util.dumps(data, indent=4)
+            response = make_response(json_data)
+            response.headers['Content-Type'] = 'application/json'
+            response.headers['Content-Disposition'] = 'attachment; filename=data.json'
+
+        elif accept_header == 'application/xml':
+            # Convert the data to a JSON     string
+            json_data = json_util.dumps(data, indent=4)
+
+            # Convert JSON data to an ElementTree (XML)
+            xml_root = ET.fromstring(json2xml.Json2xml(json.loads(json_data)).to_xml())
+            xml_str = ET.tostring(xml_root, encoding='utf-8', method='xml')
+
+            # Validate XML
+            if not validate_xml(xml_str):
+                print('Validation failed')
+
+            # Create Flask response object with validated XML data
+            response = make_response(xml_str)
+            response.headers["Content-Type"] = "application/xml"
+            response.headers["Content-Disposition"] = "attachment; filename=data.xml"
+
+    return response
+
+
 
 
 # Send a POST request with the file path to this function

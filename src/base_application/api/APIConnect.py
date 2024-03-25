@@ -49,7 +49,8 @@ def index():
             "insertMemberSQL": "/api/insertMemberSQL/<name>/<email>",
             "updateTransactionSQL": "/api/updateTransactionSQL/<transaction_id>",
             "deleteMemberSQL": "/api/deleteMember",
-            "getAssociationSQL": "/api/getAssociation"
+            "getAssociationSQL": "/api/getAssociation",
+            "getTransactionsList": "/api/getTransactionsList"
         }
     }
     return make_response(jsonify(answer), 200)
@@ -374,9 +375,11 @@ def insert_file():
     except (Exception, psycopg2.DatabaseError) as error:
         return jsonify({'message': error})
 
-
-@app.route("/api/getTransactionsSQL", methods=["GET"])
-def get_transactions_sql():
+@app.route("/api/getTransactionsList", methods=["GET"])
+def get_transactions():
+    with app.app_context():
+        # Get the Accept header from the request
+        accept_header = request.headers.get('Accept', 'application/json')
     try:
         cursor = postgre_connection.cursor()
 
@@ -385,27 +388,11 @@ def get_transactions_sql():
 
         # Get all data from the stored procedure
         data = cursor.fetchall()
-
-        # Return data in JSON format
-        return jsonify(data)
-    except psycopg2.InterfaceError as error:
-        error_message = str(error)
-        return jsonify({'error': error_message}), 500
-
-
-@app.route("/api/getTransactionsSQLXML", methods=["GET"])
-def get_transactions_sql_xml():
-    try:
-        cursor = postgre_connection.cursor()
-
-        # call a stored procedure
-        cursor.execute('SELECT * FROM select_all_transaction()')
-
-        # Get all data from the stored procedure
-        data = cursor.fetchall()
-
-        # Create an XML Tree called Data that contains all DB entries from transactions table
-        root = ET.Element("Data")
+        if accept_header == 'application/json':
+            # Return data in JSON format
+            return jsonify(data)
+        elif accept_header =='application/xml':
+            root = ET.Element("Data")
         for row in data:
             # Create one child transaction that will contain information about one db entry
             entry = ET.SubElement(root, "transaction")
@@ -437,12 +424,9 @@ def get_transactions_sql_xml():
 
         # Set content type to XML and return the response
         return Response(xml_pretty_string, content_type='application/xml')
-
-
     except psycopg2.InterfaceError as error:
         error_message = str(error)
         return jsonify({'error': error_message}), 500
-
 
 
 # Balance is [4]

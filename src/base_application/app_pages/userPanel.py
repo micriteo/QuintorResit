@@ -266,7 +266,8 @@ def create_window():
 
 
 def retrieveDB_JSON():
-    response = requests.get(api_server_ip + "/api/getTransactionsSQL")
+    headers = {'Accept': 'application/json'}
+    response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
     if len(response.json()) == 0:
         return
 
@@ -281,7 +282,8 @@ def retrieveDB_JSON():
 
 
 def retrieveDB_XML():
-    response = requests.get(api_server_ip + "/api/getTransactionsSQLXML")
+    headers = {'Accept': 'application/xml'}
+    response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
     # Check if the request was not successful
     if response.status_code != 200:
         return

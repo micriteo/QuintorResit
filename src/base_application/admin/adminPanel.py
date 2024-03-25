@@ -65,7 +65,8 @@ def adminPanel():
         edit_transaction_page_admin(selected_row)
 
     def retrieveDB_JSON():
-        response = requests.get(api_server_ip + "/api/getTransactionsSQL")
+        headers = {'Accept': 'application/json'}
+        response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
         if len(response.json()) == 0:
             return
         # Convert JSON object into an array of tuples
@@ -77,7 +78,8 @@ def adminPanel():
         return rows_out
 
     def retrieveDB_XML():
-        response = requests.get(api_server_ip + "/api/getTransactionsSQLXML")
+        headers = {'Accept': 'application/xml'}
+        response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
         # Check if the request was not successful
         if response.status_code != 200:
             return

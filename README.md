@@ -29,10 +29,9 @@ The application was built with Python and TKinter utilizing Flask to create the 
 3. Make sure to solve one potential conflict by running these commands
 `pip uninstall -y mt940 mt-940`
 `pip install -U mt-940`
-4. Host the postgresql server either locally (Using PGadmin 4) or online. Create a DB called "Quintor" and restore the DB using the `Quintor` file in src - resources directory. DB's password if needed is "password"
-5. Files `__init__` `APIConnect` `datBaseConnectionPyMongo` `main`, `api_utils` and all the schemas are parts of the API used by the app. These can be hosted seperatly on a server. Alternatively, run `main` first to start the flask app locally.
-6. If needed, adjust connection strings to MongoDB and PostgreSQL in `dataBaseConnectionPyMongo` file and API server ip in `__init__` file of the api package
-7. Run the `registerPage` page to start the application
+4. PostgreSQL is already hosted on azure so you don't have to worry about it
+5. Files `__init__` `APIConnect` `datBaseConnectionPyMongo` `api_utils` and all the schemas are parts of the API used by the app. These are separetely hosted on a azure server. Alternatively, on `api` branch you can view the application's api.
+6. Run the `registerPage` page to start the application
 
 <h3> Disclaimer </h3> 
 For testing purposes, an association is already created and the password for admin is already set - `pass`. However, if a new association is registered, the contents of the Association table must be deleted and, upon registration, a new password will be created along with the IBAN of the association.

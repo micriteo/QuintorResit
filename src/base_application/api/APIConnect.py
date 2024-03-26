@@ -31,6 +31,7 @@ def index():
     }
     return make_response(jsonify(answer), 200)
 
+
 # ----------------------- No SQL MongoDB functions of the API ---------------------------------
 
 
@@ -335,7 +336,8 @@ def insert_mt_file():
 
         # Call a stored procedure
         cursor.execute('CALL insert_transaction_5(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)', (
-            reference_number, statement_number, sequence_detail, available_balance, forward_available_balance, account_identification,
+            reference_number, statement_number, sequence_detail, available_balance, forward_available_balance,
+            account_identification,
             trans_details_list, description_list, amount_list, currency_list, trans_date_list, type_trans_list))
 
         # commit the transaction
@@ -355,7 +357,6 @@ def insert_file():
         # Get the JSON file from the POST request
         json_transactions = request.get_json()
 
-
         # Validate JSON
         if not validate_json(json_transactions):
             print("Validation failed")
@@ -373,7 +374,8 @@ def insert_file():
 
         # Call a stored procedure
         cursor.execute('CALL insert_into_file(%s,%s,%s,%s,%s,%s)', (
-            reference_number, statement_number, sequence_detail, available_balance, forward_available_balance, account_identification))
+            reference_number, statement_number, sequence_detail, available_balance, forward_available_balance,
+            account_identification))
 
         # commit the transaction
         postgre_connection.commit()

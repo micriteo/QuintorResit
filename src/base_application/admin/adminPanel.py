@@ -62,7 +62,8 @@ def adminPanel():
         edit_transaction_page_admin(selected_row)
 
     def retrieveDB_JSON():
-        response = requests.get(api_server_ip + "/api/getTransactionsSQL")
+        headers = {'Accept': 'application/json'}
+        response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
         if len(response.json()) == 0:
             return
         # Convert JSON object into an array of tuples
@@ -74,32 +75,11 @@ def adminPanel():
         return rows_out
 
     def retrieveDB_XML():
-        response = requests.get(api_server_ip + "/api/getTransactionsSQLXML")
+        headers = {'Accept': 'application/xml'}
+        response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
         # Check if the request was not successful
         if response.status_code != 200:
             return
-
-        # Parse XML response
-        xml_str = response.content.decode('utf-8')  # Decode the bytes received
-        root = ET.fromstring(xml_str)
-
-        # Check if the XML file is not empty
-        if len(root) == 0:
-            return
-
-        # Convert XML object into an array of tuples to display in table
-        rows_out = []
-        for entry in root.findall('transaction'):
-            trans_id = int(entry.findtext('transactionid'))
-            date = entry.findtext('transaction_date')
-            details = entry.findtext('transactiondetail')
-            desc = entry.findtext('description')
-            ref = entry.findtext('refrencenumber')
-            amount = entry.findtext('amount')
-            temp_tuple = (trans_id, date, details, desc, ref, amount)
-            rows_out.append(tuple(temp_tuple))
-        print("Using XML")
-        return rows_out
 
     def retrieveDB(protocol):
         if protocol == "JSON":
@@ -128,7 +108,7 @@ def adminPanel():
 
     def get_json_button_click():
         # Make a request to download the JSON data
-        response = requests.get(api_server_ip + "/api/downloadJSON")
+        response = requests.get(api_server_ip + "/api/download")
         json_data = response.json()
 
 
@@ -150,7 +130,7 @@ def adminPanel():
 
     def get_xml_button_click():
         headers = {'Accept': 'application/xml'}
-        xml_data = requests.get(api_server_ip + "/api/downloadXML", headers=headers)
+        xml_data = requests.get(api_server_ip + "/api/download", headers=headers)
         # xml_root = ET.fromstring(xml_data.content)
         xml_root = xml_data.text
 

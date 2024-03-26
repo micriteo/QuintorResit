@@ -104,10 +104,6 @@ def download():
             xml_root = ET.fromstring(json2xml.Json2xml(json.loads(json_data)).to_xml())
             xml_str = ET.tostring(xml_root, encoding='utf-8', method='xml')
 
-            # Validate XML
-            if not validate_xml(xml_str):
-                print('Validation failed')
-
             # Create Flask response object with validated XML data
             response = make_response(xml_str)
             response.headers["Content-Type"] = "application/xml"

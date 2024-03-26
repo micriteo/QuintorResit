@@ -81,6 +81,28 @@ def adminPanel():
         if response.status_code != 200:
             return
 
+        # Parse XML response
+        xml_str = response.content.decode('utf-8')  # Decode the bytes received
+        root = ET.fromstring(xml_str)
+
+        # Check if the XML file is not empty
+        if len(root) == 0:
+            return
+
+        # Convert XML object into an array of tuples to display in table
+        rows_out = []
+        for entry in root.findall('transaction'):
+            trans_id = int(entry.findtext('transactionid'))
+            date = entry.findtext('transaction_date')
+            details = entry.findtext('transactiondetail')
+            desc = entry.findtext('description')
+            ref = entry.findtext('refrencenumber')
+            amount = entry.findtext('amount')
+            temp_tuple = (trans_id, date, details, desc, ref, amount)
+            rows_out.append(tuple(temp_tuple))
+        print("Using XML")
+        return rows_out
+
     def retrieveDB(protocol):
         if protocol == "JSON":
             output = retrieveDB_JSON()

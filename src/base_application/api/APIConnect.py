@@ -45,48 +45,38 @@ def get_transactions_count():
     output = {"transactionsCount": transactions_collection.count_documents({})}
     return output
 
-
-@app.route("/api/downloadJSON", methods=["GET"])
-def downloadJSON():
+@app.route("/api/download", methods=["GET"])
+def download():
     with app.app_context():
+        # Get the Accept header from the request
+        accept_header = request.headers.get('Accept', 'application/json')
+
         # Get the data from the database
         try:
             data = get_all_transactions()
         except TypeError:
             data = []
 
-        # Create a response object
-        json_data = json_util.dumps(data, indent=4)
+        if accept_header == 'application/json':
+            # Create a JSON response object
+            json_data = json_util.dumps(data, indent=4)
+            response = make_response(json_data)
+            response.headers['Content-Type'] = 'application/json'
+            response.headers['Content-Disposition'] = 'attachment; filename=data.json'
 
-        response = make_response(json_data)
-        response.headers['Content-Type'] = 'application/json'
-        response.headers['Content-Disposition'] = 'attachment; filename=data.json'
-    return response
+        elif accept_header == 'application/xml':
+            # Convert the data to a JSON     string
+            json_data = json_util.dumps(data, indent=4)
 
+            # Convert JSON data to an ElementTree (XML)
+            xml_root = ET.fromstring(json2xml.Json2xml(json.loads(json_data)).to_xml())
+            xml_str = ET.tostring(xml_root, encoding='utf-8', method='xml')
 
-@app.route("/api/downloadXML", methods=["GET"])
-def downloadXML():
-    # Get the data from the database
-    try:
-        data = get_all_transactions()
-    except TypeError:
-        data = []
+            # Create Flask response object with validated XML data
+            response = make_response(xml_str)
+            response.headers["Content-Type"] = "application/xml"
+            response.headers["Content-Disposition"] = "attachment; filename=data.xml"
 
-    # Convert the data to a JSON string
-    # json_data = json.dumps(data)
-    json_data = json_util.dumps(data, indent=4)
-    # Convert the JSON data to an ElementTree
-    xml_root = ET.fromstring(json2xml.Json2xml(json.loads(json_data)).to_xml())
-    xml_str = ET.tostring(xml_root, encoding='utf-8', method='xml')
-
-    # Validate XML
-    if not validate_xml(xml_str):
-        print('Validation failed')
-
-    # Create the Flask response object with XML data
-    response = make_response(xml_str)
-    response.headers["Content-Type"] = "application/xml"
-    response.headers["Content-Disposition"] = "attachment; filename=data.xml"
     return response
 
 
@@ -388,8 +378,11 @@ def insert_file():
         return jsonify({'message': error}), 500
 
 
-@app.route("/api/getTransactionsSQL", methods=["GET"])
-def get_transactions_sql():
+@app.route("/api/getTransactionsList", methods=["GET"])
+def get_transactions():
+    with app.app_context():
+        # Get the Accept header from the request
+        accept_header = request.headers.get('Accept', 'application/json')
     try:
         cursor = postgre_connection.cursor()
 
@@ -398,27 +391,11 @@ def get_transactions_sql():
 
         # Get all data from the stored procedure
         data = cursor.fetchall()
-
-        # Return data in JSON format
-        return jsonify(data)
-    except psycopg2.InterfaceError as error:
-        error_message = str(error)
-        return jsonify({'error': error_message}), 500
-
-
-@app.route("/api/getTransactionsSQLXML", methods=["GET"])
-def get_transactions_sql_xml():
-    try:
-        cursor = postgre_connection.cursor()
-
-        # call a stored procedure
-        cursor.execute('SELECT * FROM select_all_transaction()')
-
-        # Get all data from the stored procedure
-        data = cursor.fetchall()
-
-        # Create an XML Tree called Data that contains all DB entries from transactions table
-        root = ET.Element("Data")
+        if accept_header == 'application/json':
+            # Return data in JSON format
+            return jsonify(data)
+        elif accept_header =='application/xml':
+            root = ET.Element("Data")
         for row in data:
             # Create one child transaction that will contain information about one db entry
             entry = ET.SubElement(root, "transaction")

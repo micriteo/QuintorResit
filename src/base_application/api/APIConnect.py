@@ -39,19 +39,20 @@ def index():
         "message": "Welcome to Sports Accounting API",
         "api": {
             "test": "/api/test",
-            "getTransactionsAmount": "/api/getTransactionsCount",
-            "getTransactions": "/api/getTransactions",
-            "uploadMT940File": "/api/uploadFile",
-            "download": "/api/download",
-            "searchKeywordSQL": "/api/searchKeyword/<keyword>",
-            "insertAssociationSQL": "/api/insertAssociation",
-            "insertFileSQL": "/api/insertFile",
-            "insertTransactionSQL": "/api/insertTransaction",
-            "insertMemberSQL": "/api/insertMemberSQL/<name>/<email>",
-            "updateTransactionSQL": "/api/updateTransactionSQL/<transaction_id>",
-            "deleteMemberSQL": "/api/deleteMember",
-            "getAssociationSQL": "/api/getAssociation",
-            "getTransactionsList": "/api/getTransactionsList"
+            "getTransactionsCount": "/api/transactions/count",
+            "getTransactions": "/api/transactions",
+            "uploadMT940File": "/api/m940/files",
+            "getMT940File": "/api/mt940",
+            "searchKeyword": "/api/transactions/search/<keyword>",
+            "insertAssociation": "/api/associations",
+            "insertFile": "/api/files",
+            "insertTransactionsIntoDB": "/api/mt940/records",
+            "insertMember": "/api/members",
+            "updateTransaction": "/api/transactions (PUT request)",
+            "deleteMember": "/api/members/<memberid> (DELETE request)",
+            "getAssociationS": "/api/associations (GET request)",
+            "getTransactionsList": "/api/transactions/list"
+
         }
     }
     return make_response(jsonify(answer), 200)
@@ -117,7 +118,7 @@ def download():
 
 
 # Send a POST request with the file path to this function
-@app.route("/api/m940", methods=["POST"])
+@app.route("/api/m940/files", methods=["POST"])
 def file_upload():
     # Get the JSON file from the POST request
     json_data = request.get_json()
@@ -133,14 +134,13 @@ def file_upload():
 
 
 # -------------------------- SQL PostGreSQL DB functions of the API ---------------------------
-@app.route("/api/deleteMember", methods=["DELETE"])
-def delete_member():
+@app.route("/api/members/<memberid>", methods=["DELETE"])
+def delete_member(memberid):
     try:
-        member_id = request.args.get('memberid')
         cursor = postgre_connection.cursor()
 
         # call a stored procedure
-        cursor.execute('CALL delete_member(%s)', (member_id,))
+        cursor.execute('CALL delete_member(%s)', (int(memberid),))
 
         # commit the procedure
         postgre_connection.commit()
@@ -153,8 +153,7 @@ def delete_member():
         return jsonify({'message': str(error)})
 
 
-# The function receives a hashed password
-@app.route("/api/insertAssociation", methods=["POST"])
+@app.route("/api/associations", methods=["POST"])
 def insert_association():
     try:
         # Get the JSON file from the POST request
@@ -186,7 +185,7 @@ def insert_association():
         return jsonify({'error': error_message})
 
 
-@app.route("/api/insertMemberSQL", methods=["POST"])
+@app.route("/api/members", methods=["POST"])
 def insert_member():
     try:
         # Get the XML file from the POST request
@@ -220,7 +219,7 @@ def insert_member():
         return jsonify({'error': error_message})
 
 
-@app.route("/api/getAssociation", methods=["GET"])
+@app.route("/api/associations", methods=["GET"])
 def get_association():
     try:
         cursor = postgre_connection.cursor()
@@ -238,46 +237,7 @@ def get_association():
         return jsonify({'error': error_message})
 
 
-@app.route("/api/insertTransaction", methods=["POST"])
-def insert_transaction():
-    try:
-        # Get the JSON file from the POST request
-        json_trans = request.get_json()
-
-        # Validate JSON
-        if not validate_json(json_trans):
-            print("Validation failed")
-            return jsonify({'Error': 'Error Occured'})
-
-        bank_reference = str(json_trans["transaction_reference"])
-
-        cursor = postgre_connection.cursor()
-
-        for trans_set in json_trans["transactions"]:
-            amount = trans_set["amount"]["amount"]
-            currency = trans_set["amount"]["currency"]
-            transaction_date = trans_set["date"]
-            transaction_details = str(trans_set["transaction_details"])
-            transaction_details = transaction_details.replace("/", "-")
-            description = None
-            typetransaction = trans_set["status"]
-
-            cursor.execute('CALL insert_into_transaction(%s,%s,%s,%s,%s,%s,%s,%s,%s)', (
-                bank_reference, transaction_details, description, amount, currency, transaction_date, None, None,
-                typetransaction))
-            # commit the transaction
-            postgre_connection.commit()
-
-        # close the cursor
-        cursor.close()
-
-        return jsonify({'message': 'File inserted successfully'})
-    except (Exception, psycopg2.DatabaseError) as error:
-        error_message = str(error)
-        return jsonify({'error': error_message})
-
-
-@app.route("/api/insertmtsql", methods=["POST"])
+@app.route("/api/mt940/records", methods=["POST"])
 def insert_mt_file():
     try:
         # Get the JSON file from the POST request & parse it into JSON
@@ -338,44 +298,7 @@ def insert_mt_file():
         return jsonify({'message': error})
 
 
-@app.route("/api/insertFile", methods=["POST"])
-def insert_file():
-    try:
-        # Get the JSON file from the POST request
-        json_transactions = request.get_json()
-
-        # Validate JSON
-        if not validate_json(json_transactions):
-            print("Validation failed")
-            return jsonify({'Error': 'Error Occured'})
-
-        # Extract values from a JSON into variables for the File table
-        reference_number = str(json_transactions["transaction_reference"])
-        statement_number = str(json_transactions["statement_number"])
-        sequence_detail = str(json_transactions["sequence_number"])
-        available_balance = json_transactions["available_balance"]["amount"]["amount"]
-        forward_available_balance = json_transactions["forward_available_balance"]["amount"]["amount"]
-        account_identification = str(json_transactions["account_identification"])
-
-        cursor = postgre_connection.cursor()
-
-        # Call a stored procedure
-        cursor.execute('CALL insert_into_file(%s,%s,%s,%s,%s,%s)', (
-            reference_number, statement_number, sequence_detail, available_balance, forward_available_balance,
-            account_identification))
-
-        # commit the transaction
-        postgre_connection.commit()
-
-        # close the cursor
-        cursor.close()
-
-        return jsonify({'message': 'File inserted successfully'})
-    except (Exception, psycopg2.DatabaseError) as error:
-        return jsonify({'message': error})
-
-
-@app.route("/api/getTransactionsList", methods=["GET"])
+@app.route("/api/transactions/list", methods=["GET"])
 def get_transactions():
     with app.app_context():
         # Get the Accept header from the request
@@ -430,7 +353,7 @@ def get_transactions():
 
 
 # Balance is [4]
-@app.route("/api/getFile", methods=["GET"])
+@app.route("/api/files", methods=["GET"])
 def get_file():
     try:
         cursor = postgre_connection.cursor()
@@ -448,7 +371,7 @@ def get_file():
         return jsonify({'error': error_message})
 
 
-@app.route("/api/getMembers", methods=["GET"])
+@app.route("/api/members", methods=["GET"])
 def get_members():
     try:
         cursor = postgre_connection.cursor()
@@ -466,7 +389,7 @@ def get_members():
         return jsonify({'error': error_message})
 
 
-@app.route("/api/getCategory", methods=["GET"])
+@app.route("/api/categories", methods=["GET"])
 def get_category():
     try:
         cursor = postgre_connection.cursor()
@@ -484,7 +407,7 @@ def get_category():
         return jsonify({'error': error_message})
 
 
-@app.route("/api/getTransactionOnId/<trans_id>", methods=["GET"])
+@app.route("/api/transactions/<trans_id>", methods=["GET"])
 def get_transaction_on_id(trans_id):
     try:
         cursor = postgre_connection.cursor()
@@ -499,7 +422,7 @@ def get_transaction_on_id(trans_id):
         return jsonify({'error': error_message})
 
 
-@app.route("/api/updateTransaction", methods=["PUT"])
+@app.route("/api/transactions", methods=["PUT"])
 def update_transaction():
     try:
         cursor = postgre_connection.cursor()
@@ -529,7 +452,7 @@ def update_transaction():
         return jsonify({'error': error_message})
 
 
-@app.route("/api/getTransactionOnIdJoin/<trans_id>", methods=["GET"])
+@app.route("/api/transactions/join/<trans_id>", methods=["GET"])
 def get_transaction_on_id_join(trans_id):
     try:
         cursor = postgre_connection.cursor()
@@ -544,7 +467,7 @@ def get_transaction_on_id_join(trans_id):
         return jsonify({'error': error_message})
 
 
-@app.route("/api/searchKeyword/<keyword>", methods=["GET"])
+@app.route("/api/transactions/search/<keyword>", methods=["GET"])
 def search_keyword(keyword):
     try:
         cursor = postgre_connection.cursor()

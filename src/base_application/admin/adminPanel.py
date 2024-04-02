@@ -29,7 +29,7 @@ def adminPanel():
 
     # Get balance from db
     balance = "No data"
-    response = requests.get(api_server_ip + "/api/getFile")
+    response = requests.get(api_server_ip + "/api/files")
     if len(response.json()) != 0:
         balance = response.json()[0][4]
 
@@ -66,7 +66,7 @@ def adminPanel():
 
     def retrieveDB_JSON():
         headers = {'Accept': 'application/json'}
-        response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
+        response = requests.get(api_server_ip + "/api/transactions/list", headers=headers)
         if len(response.json()) == 0:
             return
         # Convert JSON object into an array of tuples
@@ -79,7 +79,7 @@ def adminPanel():
 
     def retrieveDB_XML():
         headers = {'Accept': 'application/xml'}
-        response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
+        response = requests.get(api_server_ip + "/api/transactions/list", headers=headers)
         # Check if the request was not successful
         if response.status_code != 200:
             return
@@ -121,7 +121,7 @@ def adminPanel():
         transaction_details(selected_row)
 
     def retrieveDB_keyword_search(keyword):
-        response = requests.get(api_server_ip + "/api/searchKeyword/" + str(keyword))
+        response = requests.get(api_server_ip + "/api/transactions/search/" + str(keyword))
         if len(response.json()) == 0:
             return
         # Convert JSON object into an array of tuples

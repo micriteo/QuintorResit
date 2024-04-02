@@ -48,7 +48,7 @@ def create_window():
         # Clear existing rows in the table
         table_inp.delete(*table_inp.get_children())
         # search_summary_num.delete(first=0, last=255)
-        response = requests.get(api_server_ip + "/api/getFile")
+        response = requests.get(api_server_ip + "/api/files")
 
         balance_number.config(text=retrieve_balance())
         # Show all transactions if keyword entry field is empty
@@ -267,7 +267,7 @@ def create_window():
 
 def retrieveDB_JSON():
     headers = {'Accept': 'application/json'}
-    response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
+    response = requests.get(api_server_ip + "/api/transactions/list", headers=headers)
     if len(response.json()) == 0:
         return
 
@@ -283,7 +283,7 @@ def retrieveDB_JSON():
 
 def retrieveDB_XML():
     headers = {'Accept': 'application/xml'}
-    response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
+    response = requests.get(api_server_ip + "/api/transactions/list", headers=headers)
     # Check if the request was not successful
     if response.status_code != 200:
         return
@@ -312,7 +312,7 @@ def retrieveDB_XML():
 
 
 def retrieveDB_keyword_search(keyword):
-    response = requests.get(api_server_ip + "/api/searchKeyword/" + str(keyword))
+    response = requests.get(api_server_ip + "/api/transactions/search/" + str(keyword))
     if len(response.json()) == 0:
         return
 
@@ -334,7 +334,7 @@ def retrieveDB(protocol):
 
 def retrieve_balance():
     balance = "No data"
-    response = requests.get(api_server_ip + "/api/getFile")
+    response = requests.get(api_server_ip + "/api/files")
     if len(response.json()) != 0:
         balance = response.json()[0][4]
     return  balance

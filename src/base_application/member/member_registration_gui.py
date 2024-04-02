@@ -36,7 +36,7 @@ def member_registration():
                     xml_pretty_string = minidom.parseString(xml_string).toprettyxml(indent="  ")
 
                     # Insert to DB by sending the payload to an API
-                    url = api_server_ip + '/api/insertMemberSQL'
+                    url = api_server_ip + '/api/members'
                     files = {'file': ('data.xml', xml_pretty_string)}
                     response = requests.post(url, files=files)
                     # headers = {'Content-Type': 'application/xml'}

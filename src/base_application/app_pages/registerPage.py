@@ -13,7 +13,7 @@ from src.base_application.utils import hash_password
 
 def register_page():
     # Check if a user is already registered
-    jsonTest = requests.get(api_server_ip + "/api/getAssociation")
+    jsonTest = requests.get(api_server_ip + "/api/associations")
     if len(jsonTest.json()) != 0:
         # Navigate to user panel
         create_window()
@@ -39,7 +39,7 @@ def register_page():
                    'name': name,
                    'password': hashed_pass}
         json_data = json.dumps(payload, indent=4)
-        url = api_server_ip + '/api/insertAssociation'
+        url = api_server_ip + '/api/associations'
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, json=json_data, headers=headers)
         # Navigate to user panel

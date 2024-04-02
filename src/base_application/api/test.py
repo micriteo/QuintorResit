@@ -24,6 +24,6 @@ if not validate_member_xml(xml_str):
 
 
 
-url = api_server_ip + '/api/insertMemberSQL'
+url = api_server_ip + '/api/members'
 headers = {'Content-Type': 'application/xml'}
 response = requests.post(url, json=xml_payload, headers=headers)

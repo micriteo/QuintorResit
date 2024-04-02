@@ -14,13 +14,13 @@ def parse_file(file):
     # Check MT940 file
     if check_mt940_file(file):
         # Save to NoSQL DB
-        url = api_server_ip + '/api/mt940'
+        url = api_server_ip + '/api/mt940/files'
         json_data = parse_mt940_file(file)
         print(json_data)
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, json=json_data, headers=headers)
         # Save to SQL DB
-        url = api_server_ip + '/api/insertmtsql'
+        url = api_server_ip + '/api/mt940/records'
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, json=json_data, headers=headers)
 

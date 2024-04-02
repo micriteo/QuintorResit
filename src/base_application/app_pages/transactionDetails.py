@@ -8,7 +8,7 @@ from src.base_application import api_server_ip
 def transaction_details(trans_id):
     # -------------------- Functions ----------------------
     def get_transaction_json():
-        response = requests.get(api_server_ip + "/api/getTransactionOnIdJoin/" + trans_id)
+        response = requests.get(api_server_ip + "/api/transactions/join/" + trans_id)
         if len(response.json()) == 0:
             return
         return response.json()[0]
@@ -31,7 +31,7 @@ def transaction_details(trans_id):
     # -------------------------------------------------------
     # ----------------- Table -------------------------------
     table = ttk.Treeview(left_frame, columns=("ID", "Date", "Details", "Description", "Ref", "Amount", "Currency",
-                                         "CategoryID", "Category", "MemberID", "Member", "Type"),
+                                              "CategoryID", "Category", "MemberID", "Member", "Type"),
                          show="headings", style="Custom.Treeview")
     table.place(x=40, y=9000, width=1100, height=300)  # move down the table by 50 pixels
 

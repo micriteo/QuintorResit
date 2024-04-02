@@ -29,7 +29,7 @@ def adminPanel():
 
     # Get balance from db
     balance = "No data"
-    response = requests.get(api_server_ip + "/api/getFile")
+    response = requests.get(api_server_ip + "/api/files")
     if len(response.json()) != 0:
         balance = response.json()[0][4]
 
@@ -37,6 +37,9 @@ def adminPanel():
     def manage_members_button():
         window.destroy()
         manage_members()
+
+    def upload_button_click():
+        main()
 
     def logout_button():
         # create_window()
@@ -63,7 +66,7 @@ def adminPanel():
 
     def retrieveDB_JSON():
         headers = {'Accept': 'application/json'}
-        response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
+        response = requests.get(api_server_ip + "/api/transactions/list", headers=headers)
         if len(response.json()) == 0:
             return
         # Convert JSON object into an array of tuples
@@ -76,7 +79,7 @@ def adminPanel():
 
     def retrieveDB_XML():
         headers = {'Accept': 'application/xml'}
-        response = requests.get(api_server_ip + "/api/getTransactionsList", headers=headers)
+        response = requests.get(api_server_ip + "/api/transactions/list", headers=headers)
         # Check if the request was not successful
         if response.status_code != 200:
             return
@@ -118,7 +121,7 @@ def adminPanel():
         transaction_details(selected_row)
 
     def retrieveDB_keyword_search(keyword):
-        response = requests.get(api_server_ip + "/api/searchKeyword/" + str(keyword))
+        response = requests.get(api_server_ip + "/api/transactions/search/" + str(keyword))
         if len(response.json()) == 0:
             return
         # Convert JSON object into an array of tuples
@@ -129,8 +132,9 @@ def adminPanel():
         return rows_out
 
     def get_json_button_click():
+        headers = {'Accept': 'application/json'}
         # Make a request to download the JSON data
-        response = requests.get(api_server_ip + "/api/download")
+        response = requests.get(api_server_ip + "/api/mt940", headers=headers)
         json_data = response.json()
 
 
@@ -152,7 +156,7 @@ def adminPanel():
 
     def get_xml_button_click():
         headers = {'Accept': 'application/xml'}
-        xml_data = requests.get(api_server_ip + "/api/download", headers=headers)
+        xml_data = requests.get(api_server_ip + "/api/mt940", headers=headers)
         # xml_root = ET.fromstring(xml_data.content)
         xml_root = xml_data.text
 
@@ -195,7 +199,7 @@ def adminPanel():
 
     manageMembers = tk.Button(frame1, text="Manage Memberships", font=("Inter", 12, "normal"),
                               bg="#D9D9D9", fg="black", justify="left", command= lambda: manage_members_button())
-    manageMembers.place(x=75, y=300, width=180, height=30)
+    manageMembers.place(x=200, y=300, width=180, height=30)
 
     searchBar = tk.Entry(frame1, font=("Inter", 14, "normal"), bg="#D9D9D9", fg="black", justify="left")
     searchBar.place(x=75, y=400, width=180, height=30)
@@ -288,10 +292,10 @@ def adminPanel():
     radio_frame.place(x=0, y=700, width=600, height=100)
 
     # Create the radio buttons
-    json_radio = ttk.Radiobutton(radio_frame, text="JSON", value="JSON", style="TRadiobutton", variable=format_var,
-                                 command=lambda: radio_button_update("JSON"))
-    xml_radio = ttk.Radiobutton(radio_frame, text="XML", value="XML", style="TRadiobutton", variable=format_var,
-                                command=lambda: radio_button_update("XML"))
+    json_radio = ttk.Radiobutton(radio_frame, text="JSON", value="JSON", command=lambda: radio_button_update("JSON"),
+                                 style="TRadiobutton", variable=format_var)
+    xml_radio = ttk.Radiobutton(radio_frame, text="XML", value="XML", command=lambda: radio_button_update("XML"),
+                                style="TRadiobutton", variable=format_var)
 
     # Pack the radio buttons (left and right)
     json_radio.pack(side="left", padx=100)
@@ -336,7 +340,7 @@ def adminPanel():
         # Remove the sum per search label if table is updated
         widget.config(text="")
 
-    radio_button_update("JSON")
+
     # Bind the on_closing function to the window close event
     window.protocol("WM_DELETE_WINDOW", on_closing)
 

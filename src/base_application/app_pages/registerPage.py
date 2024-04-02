@@ -1,9 +1,9 @@
 import json
-import tkinter as tk
-from tkinter import ttk
 import os
 import subprocess
 import sys
+import tkinter as tk
+from tkinter import ttk
 from tkinter import *
 import requests
 from src.base_application import api_server_ip
@@ -13,7 +13,7 @@ from src.base_application.utils import hash_password
 
 def register_page():
     # Check if a user is already registered
-    jsonTest = requests.get(api_server_ip + "/api/getAssociation")
+    jsonTest = requests.get(api_server_ip + "/api/associations")
     if len(jsonTest.json()) != 0:
         # Navigate to user panel
         create_window()
@@ -34,12 +34,12 @@ def register_page():
             table_inp.insert("", "end", values=result)
     def button_click(name, password, iban):
         hashed_pass = hash_password(password)
-        # Save to DB
+        # Save to DBp
         payload = {'accountID': iban,
                    'name': name,
                    'password': hashed_pass}
         json_data = json.dumps(payload, indent=4)
-        url = api_server_ip + '/api/insertAssociation'
+        url = api_server_ip + '/api/associations'
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, json=json_data, headers=headers)
         # Navigate to user panel
@@ -98,7 +98,6 @@ def register_page():
 
 subprocess.Popen([sys.executable, '../member/folderListener.py'])
 register_page()
-
 
 
 

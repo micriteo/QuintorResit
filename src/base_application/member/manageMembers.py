@@ -14,7 +14,7 @@ def manage_members():
 
     # connect to the database
     def retrieveDB():
-        response = requests.get(api_server_ip + "/api/getMembers")
+        response = requests.get(api_server_ip + "/api/members")
         print(response)
         if len(response.json()) == 0:
             return
@@ -100,9 +100,8 @@ def manage_members():
         global selected_row
         if selected_row is None:
             return
-        data_params = {'memberid': str(selected_row)}
         # Update DB
-        response = requests.delete(api_server_ip + "/api/deleteMember", params=data_params)
+        response = requests.delete(api_server_ip + f"/api/members/{selected_row}")
         print(response.text)
         rows = retrieveDB()
         table.delete(*table.get_children())
@@ -123,18 +122,18 @@ def manage_members():
     heading5.place(x=220, y=200, width=200, height=50)
 
     member_count = tk.Label(right_frame, text=num_of_members, font=("Roboto", 14), bg="#F0AFAF", fg="#000000",
-                        justify="center")
+                            justify="center")
     member_count.place(x=220, y=260, width=200, height=50)
     # Buttons
 
     back_button = ttk.Button(left_frame, text="Back", command=lambda: back_button_click())
-    back_button.place(x=30, y=850, width=100, height=30)
+    back_button.place(x=30, y=650, width=100, height=30)
 
     add_member_button = ttk.Button(left_frame, text="Add member", command=lambda: add_member_button_click())
     add_member_button.place(x=140, y=550, width=300, height=80)
 
     delete_button = ttk.Button(left_frame, text="Delete", command=lambda: delete_button_click(table, member_count))
-    delete_button.place(x=450, y=850, width=100, height=30)
+    delete_button.place(x=450, y=650, width=100, height=30)
 
     # Start the main event loop
     root.mainloop()

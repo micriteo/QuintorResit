@@ -128,13 +128,13 @@ def manage_members():
     # Buttons
 
     back_button = ttk.Button(left_frame, text="Back", command=lambda: back_button_click())
-    back_button.place(x=30, y=850, width=100, height=30)
+    back_button.place(x=30, y=650, width=100, height=30)
 
     add_member_button = ttk.Button(left_frame, text="Add member", command=lambda: add_member_button_click())
     add_member_button.place(x=140, y=550, width=300, height=80)
 
     delete_button = ttk.Button(left_frame, text="Delete", command=lambda: delete_button_click(table, member_count))
-    delete_button.place(x=450, y=850, width=100, height=30)
+    delete_button.place(x=450, y=650, width=100, height=30)
 
     # Start the main event loop
     root.mainloop()

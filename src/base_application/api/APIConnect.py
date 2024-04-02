@@ -21,10 +21,11 @@ from xmlschema import XMLSchema
 # from src.base_application.api.main import app
 app = Flask(__name__)
 
-from src.base_application.api.dataBaseConnectionPyMongo import get_connection_postgre, get_connection_postgre_user,\
+from src.base_application.api.dataBaseConnectionPyMongo import get_connection_postgre, get_connection_postgre_user, \
     get_collection
 from src.base_application.api.api_utils import validate_json, validate_association_json, validate_member_xml, \
     validate_xml
+
 # Get connection strings to Postgre and MongoDB
 transactions_collection = get_collection()
 postgre_connection = get_connection_postgre()
@@ -55,6 +56,7 @@ def index():
     }
     return make_response(jsonify(answer), 200)
 
+
 # ----------------------- No SQL MongoDB functions of the API ---------------------------------
 
 
@@ -63,12 +65,13 @@ def test():
     return make_response(jsonify("API works fine!"))
 
 
-@app.route("/api/getTransactionsCount", methods=["GET"])
+@app.route("/api/transactions/count", methods=["GET"])
 def get_transactions_count():
     output = {"transactionsCount": transactions_collection.count_documents({})}
     return output
 
-@app.route("/api/getTransactions", methods=["GET"])
+
+@app.route("/api/transactions", methods=["GET"])
 def get_all_transactions():
     output_transactions = []
 
@@ -77,7 +80,8 @@ def get_all_transactions():
 
     return output_transactions
 
-@app.route("/api/download", methods=["GET"])
+
+@app.route("/api/mt940", methods=["GET"])
 def download():
     with app.app_context():
         # Get the Accept header from the request
@@ -112,10 +116,8 @@ def download():
     return response
 
 
-
-
 # Send a POST request with the file path to this function
-@app.route("/api/uploadFile", methods=["POST"])
+@app.route("/api/m940", methods=["POST"])
 def file_upload():
     # Get the JSON file from the POST request
     json_data = request.get_json()
@@ -321,7 +323,8 @@ def insert_mt_file():
 
         # Call a stored procedure
         cursor.execute('CALL insert_transaction_5(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)', (
-            reference_number, statement_number, sequence_detail, available_balance, forward_available_balance, account_identification,
+            reference_number, statement_number, sequence_detail, available_balance, forward_available_balance,
+            account_identification,
             trans_details_list, description_list, amount_list, currency_list, trans_date_list, type_trans_list))
 
         # commit the transaction
@@ -341,7 +344,6 @@ def insert_file():
         # Get the JSON file from the POST request
         json_transactions = request.get_json()
 
-
         # Validate JSON
         if not validate_json(json_transactions):
             print("Validation failed")
@@ -359,7 +361,8 @@ def insert_file():
 
         # Call a stored procedure
         cursor.execute('CALL insert_into_file(%s,%s,%s,%s,%s,%s)', (
-            reference_number, statement_number, sequence_detail, available_balance, forward_available_balance, account_identification))
+            reference_number, statement_number, sequence_detail, available_balance, forward_available_balance,
+            account_identification))
 
         # commit the transaction
         postgre_connection.commit()
@@ -370,6 +373,7 @@ def insert_file():
         return jsonify({'message': 'File inserted successfully'})
     except (Exception, psycopg2.DatabaseError) as error:
         return jsonify({'message': error})
+
 
 @app.route("/api/getTransactionsList", methods=["GET"])
 def get_transactions():
@@ -387,7 +391,7 @@ def get_transactions():
         if accept_header == 'application/json':
             # Return data in JSON format
             return jsonify(data)
-        elif accept_header =='application/xml':
+        elif accept_header == 'application/xml':
             root = ET.Element("Data")
         for row in data:
             # Create one child transaction that will contain information about one db entry
@@ -557,11 +561,3 @@ def search_keyword(keyword):
 
 if __name__ == '__main__':
     app.run()
-
-
-
-
-
-
-
-

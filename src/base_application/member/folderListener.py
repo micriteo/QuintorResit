@@ -14,7 +14,7 @@ def parse_file(file):
     # Check MT940 file
     if check_mt940_file(file):
         # Save to NoSQL DB
-        url = api_server_ip + '/api/uploadFile'
+        url = api_server_ip + '/api/mt940'
         json_data = parse_mt940_file(file)
         print(json_data)
         headers = {'Content-Type': 'application/json'}

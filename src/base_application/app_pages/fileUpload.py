@@ -39,7 +39,7 @@ class MainWindow:
             # Check MT940 file
             if check_mt940_file(file_path):
                 # Save to NoSQL DB
-                url = api_server_ip + '/api/uploadFile'
+                url = api_server_ip + '/api/mt940'
                 json_data = parse_mt940_file(file_path)
                 print(json_data)
                 headers = {'Content-Type': 'application/json'}

@@ -102,7 +102,7 @@ def manage_members():
             return
         data_params = {'memberid': str(selected_row)}
         # Update DB
-        response = requests.delete(api_server_ip + "/api/deleteMember", params=data_params)
+        response = requests.delete(api_server_ip + f"/api/members/{data_params}")
         print(response.text)
         rows = retrieveDB()
         table.delete(*table.get_children())

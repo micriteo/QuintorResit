@@ -36,6 +36,18 @@ The application was built with Python and TKinter utilizing Flask to create the 
 <h3> Disclaimer </h3> 
 For testing purposes, an association is already created and the password for admin is already set - `pass`. However, if a new association is registered, the contents of the Association table must be deleted and, upon registration, a new password will be created along with the IBAN of the association.
 
+<h3> Usage Instructions </h3>
+To add files to the program and into the database, you have to put your mt940 file in a folder inside the <strong>base_application</strong> folder called <strong>listener_folder</strong>. Once you place the file in it will be added to the list of transactions as seen in the the table on the right.<br>
+You can click on any transaction within the table, and while a transaction is selected the button above the table can be used to edit, update and view the details of the transaction.<br>
+Below the table the XML and JSON buttons can be found which switches the table data to their respective data types.<br>
+On the left side of the user panel there is a text box where you can search for the transaction containing what you typed in the box, this is done by pressing the <strong>Keyboard Search</strong> Button below.<br>
+On the right of the <strong>Keyboard Search</strong> button there is a <strong>Admin Login</strong> button which brings up another page when clicked prompting for an admin password. The password is "pass".
+Once on the admin page you can go back using the <strong>Logout</strong> button next to the welcome text.<br>
+You can add more members using the "Manage Memberships" button and continuing with the <strong>Add Member</strong> button which will allow you to add the email and username of the new member.<br>
+Back in the admin panel, you can search similar to the user panel by typing in the text box and clicking the "Search Keyword" button.<br>
+Below the search field, there are two buttons, <strong>Download Transactions in JSON</strong> and <strong>Download Transactions in XML</strong> this will allow the user to get all the contents in the table in the respective file formats.<br>
+Everything on the right side of the application is similar to the user panel in functionality.
+
 <h3> Authors </h3>
     
 * Dimitri Vastenhout
